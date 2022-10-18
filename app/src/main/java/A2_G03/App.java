@@ -4,11 +4,15 @@
 package A2_G03;
 
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+    
 
-    public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+    public static void main(String[] args) throws Exception {
+        // System.out.println(new App().getGreeting());
+        Database db = new Database();
+        // db.setUp();
+        // db.addCustomer("pham", "hji");
+        // db.addCustomer("pham", "hjikoko");
+        System.out.println(Integer.parseInt("40"));
+
     }
 }
