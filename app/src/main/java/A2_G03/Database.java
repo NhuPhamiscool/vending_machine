@@ -6,7 +6,7 @@ import org.json.simple.JSONArray;
 // import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import org.json.simple.JSONObject;
-// import org.json.*;
+import org.json.*;
 import java.io.FileReader;
 import org.json.simple.parser.*;
 import java.util.*;
@@ -42,7 +42,9 @@ public class Database {
         folder.mkdirs();
 
         JSONObject loginDetails = new JSONObject();
+        // JSONObject cardDetails = new JSONObject();
 
+        JSONArray nameAndCardDetail = new JSONArray();
         JSONArray nameAndPasswordCus = new JSONArray();
         JSONArray nameAndPasswordAd = new JSONArray();
         JSONArray nameAndPasswordSel = new JSONArray();
@@ -95,7 +97,7 @@ public class Database {
         }
     }
 
-    public void writeFileProcess(String fileName, JSONObject jo)  {
+    public static void writeFileProcess(String fileName, JSONObject jo)  {
         try {
 
             writeToFile(fileName + ".json", jo.toString(), false);
@@ -107,7 +109,7 @@ public class Database {
     }
 
 
-    public void addCustomer (String username, String password)  throws Exception {
+    public static void addCustomer (String username, String password)  throws Exception {
         JSONObject jObject =  getJSONFileObject("login_info");
         // create new currency
         // should we create new user here?

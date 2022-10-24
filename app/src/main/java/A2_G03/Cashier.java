@@ -1,15 +1,29 @@
+package A2_G03;
+
 import java.util.*;
+import java.io.*;
+import org.json.simple.parser.*;
+import org.json.*;
 
-public class Cashier  {
-    public Cashier() {
+public class Cashier extends User {
+    // HashMap<String, Integer> change 
+    // Map<String, Integer> change = new HashMap<>();
 
+    public Cashier(String username, String password) {
+        super(username, password);
+        // change.put("20", 3);
+        // change.put("10", 3);
+        // change.put("5", 3);
+        // change.put("50", 3);
+        // change.put("1", 3);
+        // change.put("2", 3);
     }
 
-    public void handleChangeProcess (Map<String, Integer> availableMon, double totalChange) {
+    public void handleChangeProcess (Map<String, Integer> availableMon, int totalChange) {
         int leftChange = totalChange;
 
         System.out.println("Please take your change: ");
-        for (HashMap.Entry<String, Integer> entry : change.entrySet()) {
+        for (HashMap.Entry<String, Integer> entry : availableMon.entrySet()) {
             int note      = Integer.parseInt(entry.getKey());
             int available = entry.getValue();
 
@@ -25,7 +39,7 @@ public class Cashier  {
 
                 // update change to return by minus itself with the number of notes multiply the note
                 leftChange -= note * numOfNote;
-                change.put(entry.getKey(), change.get(entry.getKey()) - numOfNote);
+                availableMon.put(entry.getKey(), availableMon.get(entry.getKey()) - numOfNote);
                 System.out.println(entry.getKey() + ": " + String.valueOf(numOfNote));
 
             }
@@ -65,6 +79,36 @@ public class Cashier  {
         }
     }
 
+    public boolean payByCard(String cardHolderName, String pin) throws ParseException {
+        JSONArray ja;
+
+        try {
+            String jsonString;
+           
+            jsonString = Database.read("credit_cards.json");
+            JSONParser parser = new JSONParser();
+            ja = (JSONArray) parser.parse(jsonString);
+            
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        for (int i = 0 ; i < ja.length(); i++) {
+            JSONObject obj = (JSONObject) ja.get(i);
+            if (obj.get("name").equals(cardHolderName) && obj.get("number").equals(pin)) {
+                return true; 
+            }
+        }
+        return false;
+
+
+
+
+
+    }
+
     public void modifyChange(Map<String, Integer> change, String toChange, int quantity) {
         change.put(toChange, change.get(toChange) + quantity);
     }
@@ -76,8 +120,8 @@ public class Cashier  {
     }
 
     public void transactionSummary() {
-        for (Transaction t : Transaction.allTrans) {
-            System.out.println(t.getDate() + t.getTime() + t.getItem() + t.getMoneyPaid() + t.getReturnChange() + t.getPaymentMethod());
+        for (Transaction t : Transaction.completedTransaction) {
+            System.out.println(t.getDate() + t.getTime() + t.getItemName() + String.valueOf(t.getMoneyPaid()) + String.valueOf(t.getReturnChange()) + t.getPaymentMethod());
         }
     }
 }

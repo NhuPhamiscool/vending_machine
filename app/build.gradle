@@ -17,13 +17,21 @@ repositories {
     mavenCentral()
 }
 
+run {
+    standardInput = System.in
+    // -Dorg.gradle.console=plain
+}
+
 dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 
     // This dependency is used by the application.
+    // implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation 'org.json:json:20171018'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'com.google.guava:guava:30.1.1-jre'
+    // implementation 'org.gradle.console=plain'
 }
 
 application {
@@ -35,3 +43,31 @@ tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
+
+// abstract class PasswordTask extends DefaultTask {
+//     @TaskAction
+//     def password () {
+//         def console = System.console()
+//         if (console) {
+//             username = console.readLine('> Please enter your username: ')
+//             password = console.readPassword('> Please enter your password: ')
+//         } else {
+//             println "Cannot get console."
+//         }
+//     }
+// }
+// tasks.register('password', PasswordTask)
+ 
+// task ask << {
+//     def console = System.console()
+//     if (console) {
+//         username = console.readLine('> Please enter your username: ')
+//         password = console.readPassword('> Please enter your password: ')
+//     } else {
+//         logger.error "Cannot get console."
+//     }
+// }
+ 
+// task print << {
+//     println "Hello $username! Your password is ${password.size()} characters."
+// }
