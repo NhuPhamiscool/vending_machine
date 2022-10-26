@@ -10,25 +10,28 @@ import java.util.Arrays;
 import java.util.List; 
 
 public class App {
-    public static void passwordExample() {        
-        Console console = System.console();
-        if (console == null) {
-            System.out.println("Couldn't get Console instance");
-            System.exit(0);
-        }
+    // public static void passwordExample() {        
+    //     Console console = System.console();
+    //     if (console == null) {
+    //         System.out.println("Couldn't get Console instance");
+    //         System.exit(0);
+    //     }
 
-        console.printf("Testing password%n");
-        char[] passwordArray = console.readPassword("Enter your secret password: ");
-        console.printf("Password entered was: %s%n", new String(passwordArray));
+    //     console.printf("Testing password%n");
+    //     char[] passwordArray = console.readPassword("Enter your secret password: ");
+    //     console.printf("Password entered was: %s%n", new String(passwordArray));
 
-    }
+    // }
 
     public static void main(String[] args) throws Exception {
         Product chips = new Chips("chip", 21, 30.0);
         Product drink = new Drink("drink", 01, 23.0);
         VendingMachine vm = new VendingMachine();
-        vm.productList.addAll(chips, drink);
-        vm.
+        vm.productList.add(chips);
+        vm.productList.add(drink);
+        vm.run();
+
+        // vm.
         // vm.
 
         // passwordExample();

@@ -12,8 +12,8 @@ import org.json.simple.parser.*;
 import java.util.*;
 import java.io.*;
 import java.lang.Object;
-// import com.google.gson.Gson;
-// import com.google.gson.reflect.TypeToken;  
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;  
 // import java.lang.Math;
 // import java.time.LocalDate;
 
@@ -35,7 +35,9 @@ public class Database {
         fWriter.write(textToWrite);
         fWriter.close();
     }
-
+    // public static void main(String[] args) {
+    //     returnChange()
+    // }
     public void setUp() {
         // make a folder called data here
         File folder = new File(FOLDER_PATH);
@@ -128,6 +130,37 @@ public class Database {
         jObject.put("Customers", customerList);
 
         writeFileProcess("login_info", jObject);
+
+    }
+
+    // public static 
+
+    public static boolean checkUser (String username, String password)  throws Exception {
+        JSONObject jObject =  getJSONFileObject("login_info");
+        
+
+        
+        Object roleName = jObject.get("Customers");
+
+        JSONArray customerList = (JSONArray) roleName;
+
+                     
+
+        for (int i = 0 ; i < customerList.size(); i++) {
+            JSONObject obj = (JSONObject) customerList.get(i);
+            String o = String.valueOf(obj);
+            Map<String, String> userInfo = new Gson().fromJson(o, new TypeToken<HashMap<String, String>>() {  
+                        }.getType());
+            for (Map.Entry<String, String> entry : userInfo.entrySet()) {
+                if (entry.getKey().equals(username) && entry.getValue().equals(password)) {
+                    return true;
+                }
+            }
+            
+
+        }
+        return false;
+       
 
     }
 

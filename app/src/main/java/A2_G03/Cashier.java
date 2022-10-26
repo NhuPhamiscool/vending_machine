@@ -19,75 +19,75 @@ public class Cashier extends User {
         // change.put("2", 3);
     }
 
-    public void handleChangeProcess (Map<String, Integer> availableMon, int totalChange) {
-        int leftChange = totalChange;
+    // public void handleChangeProcess (Map<String, Integer> availableMon, int totalChange) {
+    //     int leftChange = totalChange;
 
-        System.out.println("Please take your change: ");
-        for (HashMap.Entry<String, Integer> entry : availableMon.entrySet()) {
-            int note      = Integer.parseInt(entry.getKey());
-            int available = entry.getValue();
+    //     System.out.println("Please take your change: ");
+    //     for (HashMap.Entry<String, Integer> entry : availableMon.entrySet()) {
+    //         int note      = Integer.parseInt(entry.getKey());
+    //         int available = entry.getValue();
 
-            // if the notes less than the change to return
-            if (note <= leftChange && available != 0) {
-                // calculate how many notes needed
-                int numOfNote = leftChange / note % note;
+    //         // if the notes less than the change to return
+    //         if (note <= leftChange && available != 0) {
+    //             // calculate how many notes needed
+    //             int numOfNote = leftChange / note % note;
 
-                // check if available note satisfy number of notes we need
-                if (available <= numOfNote) {
-                    numOfNote -= available;
-                }
+    //             // check if available note satisfy number of notes we need
+    //             if (available <= numOfNote) {
+    //                 numOfNote -= available;
+    //             }
 
-                // update change to return by minus itself with the number of notes multiply the note
-                leftChange -= note * numOfNote;
-                availableMon.put(entry.getKey(), availableMon.get(entry.getKey()) - numOfNote);
-                System.out.println(entry.getKey() + ": " + String.valueOf(numOfNote));
+    //             // update change to return by minus itself with the number of notes multiply the note
+    //             leftChange -= note * numOfNote;
+    //             availableMon.put(entry.getKey(), availableMon.get(entry.getKey()) - numOfNote);
+    //             System.out.println(entry.getKey() + ": " + String.valueOf(numOfNote));
 
-            }
+    //         }
 
-            if (leftChange == 0) {
-                break;
-            }
-        }
+    //         if (leftChange == 0) {
+    //             break;
+    //         }
+    //     }
 
-        if (leftChange == 0) {
-            System.out.println("there is no available change. Do you want to input new note (press Y) or do you want to cancel the order (press C)");
-        }
-    }
+    //     if (leftChange == 0) {
+    //         System.out.println("there is no available change. Do you want to input new note (press Y) or do you want to cancel the order (press C)");
+    //     }
+    // }
 
-    public void returnChange(Map<String, Integer> note, Map<String, Integer> coin, double totalChange) {
-        int leftNote = 0;
-        int leftCoin = 0;
+    // public void returnChange(Map<String, Integer> note, Map<String, Integer> coin, double totalChange) {
+    //     int leftNote = 0;
+    //     int leftCoin = 0;
 
-        // if change is not a whole
-        if (totalChange % 1 != 0) {
-            String tc = Double.toString(totalChange);
-            String[] convert = tc.split("\\.");
+    //     // if change is not a whole
+    //     if (totalChange % 1 != 0) {
+    //         String tc = Double.toString(totalChange);
+    //         String[] convert = tc.split("\\.");
 
-            leftNote = Integer.parseInt(convert[0]);
-            leftCoin = Integer.parseInt(convert[1]);
+    //         leftNote = Integer.parseInt(convert[0]);
+    //         leftCoin = Integer.parseInt(convert[1]);
 
-            handleChangeProcess(note, leftNote);
-            handleChangeProcess(coin, leftCoin);
+    //         handleChangeProcess(note, leftNote);
+    //         handleChangeProcess(coin, leftCoin);
 
-        } else {
-            String tc = Double.toString(totalChange);
-            String[] convert = tc.split("\\.");
+    //     } else {
+    //         String tc = Double.toString(totalChange);
+    //         String[] convert = tc.split("\\.");
 
-            leftNote = Integer.parseInt(convert[0]);
+    //         leftNote = Integer.parseInt(convert[0]);
 
-            handleChangeProcess(note, leftNote);
-        }
-    }
+    //         handleChangeProcess(note, leftNote);
+    //     }
+    // }
 
-    public boolean payByCard(String cardHolderName, String pin) throws ParseException {
-        JSONArray ja;
+    public static boolean payByCard(String cardHolderName, String pin) throws ParseException {
+        org.json.simple.JSONArray ja;
 
         try {
             String jsonString;
            
             jsonString = Database.read("credit_cards.json");
             JSONParser parser = new JSONParser();
-            ja = (JSONArray) parser.parse(jsonString);
+            ja = (org.json.simple.JSONArray) parser.parse(jsonString);
             
         }
         catch (IOException e) {
@@ -95,8 +95,8 @@ public class Cashier extends User {
             return false;
         }
 
-        for (int i = 0 ; i < ja.length(); i++) {
-            JSONObject obj = (JSONObject) ja.get(i);
+        for (int i = 0 ; i < ja.size(); i++) {
+            org.json.simple.JSONObject obj = (org.json.simple.JSONObject) ja.get(i);
             if (obj.get("name").equals(cardHolderName) && obj.get("number").equals(pin)) {
                 return true; 
             }

@@ -1,6 +1,8 @@
 package A2_G03;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.ArrayList;
 // import java.time.LocalDateTime;
@@ -14,12 +16,28 @@ public class VendingMachine {
     // why hashmap?
     // HashMap<Product, Integer> productList; 
     ArrayList<Product> productList; 
+    Map<String, Integer> note = new LinkedHashMap<String, Integer>();
+    Map<String, Integer> coin = new LinkedHashMap<String, Integer>();
+    
 
     public VendingMachine() {
         this.allUsers = new ArrayList<>();
         this.currentUser = null;
         this.anonymous = new Customer(null, null);
         this.productList = new ArrayList<Product>();
+        note.put("100", 5);
+        note.put("50", 5);
+        note.put("20", 5);
+        note.put("10", 10);
+        note.put("5", 10);
+        note.put("2", 20);
+        note.put("1", 20);
+
+        coin.put("50", 30);
+        coin.put("20", 30);
+        coin.put("10", 30);
+        coin.put("5", 30);
+
     }
 
     public boolean checkDetails(String username, String password){
@@ -51,29 +69,24 @@ public class VendingMachine {
         return false;
     }
 
-    public void login(){
+    public void login() throws Exception {
         Scanner scan = new Scanner(System.in);
         boolean success = false;
         String username = "";
         String password = "";
         // Console console = System.console();
-
+        PasswordField pw = new PasswordField();
         while (!success){
             System.out.println("Please enter your username: ");
             username = scan.next();
-            System.out.println("Please enter your password: ");
-            password = scan.next();
-            // char[] passwordArray = console.readPassword("Enter your  password: ");
-            // password = new String(passwordArray);
-            // for (int i = 0; i < passwordArray.length; i++) {
-            //     System.out.print("*");
-                
-            // }
-            // System.out.println();
-            if (this.checkDetails(username, password)){
+            // System.out.println("Please enter your password: ");
+            password = pw.readPassword("Please enter your password: ");
+            
+            if (Database.checkUser(username, password)){
                 System.out.println("\nLogin successful.");
                 this.currentUser = this.getUser(username);
                 success = true;
+
             } else {
                 System.out.println("Incorrect username or password. Please enter 1 to try again or 2 to quit.");
                 String option = scan.next();
@@ -135,6 +148,89 @@ public class VendingMachine {
     public void run() throws Exception {
         //need to determine what the currentuser is. run the login part here. Olivia's code??
         Scanner scan = new Scanner(System.in);
+
+        System.out.println("Welcome to the Vending Machine");
+        System.out.println("Please select from the following options: \n[1] for login, [2] for create account, [3] to continue as guest.");
+        
+        String opt = scan.next();
+        while (opt.isEmpty() || (!opt.equals("1") && !opt.equals("2") && !opt.equals("3"))) {
+            System.out.println("Option invalid, please try again. \nPlease enter [1] for login, [2] for create account, [3] to continue as guest");
+            opt = scan.next();
+        }
+
+        if (opt.equals("1")) {
+            this.login();
+
+        } else if (opt.equals("2")) {
+            this.createAccount();
+
+        } else if (opt.equals("3")) {
+            this.currentUser = anonymous;
+        }
+
+        HashMap<Product, Integer> selected = select();
+        String paymentMethod = "";
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now();
+        double moneyPaid = 0.0;
+        double returnChange = 0.0;
+
+        double total = 0;
+        for (Map.Entry<Product, Integer> entry : selected.entrySet()) {
+            total += entry.getKey().getPrice() * entry.getValue();
+        }
+        System.out.println("Your total is" + String.valueOf(total));
+        System.out.println("Please type [1] to proceed to payment process or [2] to cancel purchase");
+
+        String paymentOption = scan.next();
+
+        while (!paymentOption.equals("1") && ! paymentOption.equals("2")) {
+            System.out.println("Invalid option, please try again.");
+            System.out.println("Please type [1] to proceed to payment process or [2] to cancel purchase");
+            paymentOption = scan.next();
+        }
+
+        if (paymentOption.equals("1")) {
+            System.out.println("Please type [1] to pay with card or [2] to pay with cash");
+            paymentOption = scan.next();
+
+            while (!paymentOption.equals("1") && ! paymentOption.equals("2")) {
+                System.out.println("Invalid option, please try again.");
+                System.out.println("Please type [1] to pay with card or [2] to pay with cash");
+                paymentOption = scan.next();
+            }
+            if (paymentOption.equals("1")) {
+                System.out.println("Please enter card holder name");
+                String cardHolderName = scan.next();
+
+                System.out.println("Please enter pin");
+                String pin = scan.next();
+
+            
+                if (Cashier.payByCard(cardHolderName, pin)) {
+                    System.out.println("transaction completed. Thank you.");
+                    // currentUser.addCardInfo(cardHolderName, pin);
+                }
+            
+                
+            } else {
+                System.out.println("Please input your cash");
+                double paymentAmount = scan.nextDouble();
+                
+                double totalChange = paymentAmount - total;
+                if (totalChange <= 0) {
+                    
+                    // error message 
+                }
+                returnChange(note, coin, totalChange);
+                System.out.println("transaction completed. Thank you.");  
+            }
+        
+        }
+
+
+        Transaction t = scan(String.valueOf(date), String.valueOf(time), paymentMethod, selected, moneyPaid, returnChange);
+        // currentUser.addTransaction(t);
         if (currentUser instanceof Owner) {
             System.out.println("Welcome Owner");
             System.out.println("As an owner, here are your options for performing functionalities . \nA list of usernames in the vending machine\nA summary of cancelled transcations");
@@ -146,27 +242,8 @@ public class VendingMachine {
 
         else if (currentUser instanceof User) {
             
-            System.out.println("Welcome to the Vending Machine");
-            System.out.println("Please select from the following options: \n[1] for login, [2] for create account, [3] to continue as guest.");
-            String opt = scan.next();
-            while (opt.isEmpty() || (!opt.equals("1") && !opt.equals("2") && !opt.equals("3"))){
-                System.out.println("Option invalid, please try again. \nPlease enter [1] for login, [2] for create account, [3] to continue as guest");
-                opt = scan.next();
-            }
-            if (opt.equals("1")){
-                this.login();
-            } else if (opt.equals("2")){
-                this.createAccount();
-            } else if (opt.equals("3")) {
-                this.currentUser = anonymous;
-            }
-            HashMap<Product, Integer> selected = select();
-            String paymentMethod = "";
-            LocalDate date = LocalDate.now();
-            LocalTime time = LocalTime.now();
-            double moneyPaid = 0.0;
-            double returnChange = 0.0;
-            scan(String.valueOf(date), String.valueOf(time), paymentMethod, selected, moneyPaid, returnChange);
+            
+ 
         
         } else if (currentUser instanceof Cashier) {
             
@@ -178,9 +255,10 @@ public class VendingMachine {
     //to be confirmed
     // public void printreciept
 
-
+    
     public Transaction scan(String date, String time, String paymentMethod, HashMap<Product, Integer> selectedProduct, 
     double moneyPaid, double returnChange) {
+        // System.out.println("Your total is" + String.valueOf())
         Transaction transaction = new Transaction(date, time, paymentMethod, selectedProduct, moneyPaid, returnChange );
         //putting the selecteed products into a transcation, ie. "scanning it"
         // for (Product p : selectedProduct.keySet()){
@@ -196,12 +274,10 @@ public class VendingMachine {
     }
 
 
-
-
     public HashMap<Product, Integer> select() {
         //boolean done
         boolean done = false;
-        HashMap<Product, Integer> selectedProducts = new HashMap<>();
+        HashMap<Product, Integer> selectedProducts = new HashMap<Product, Integer>();
         String itemName;
         Product selectedProd = null;
         int quantityWanted;
@@ -259,6 +335,69 @@ public class VendingMachine {
         }
         return selectedProducts;
 
+    }
+
+    public void handleChangeProcess (Map<String, Integer> availableMon, int totalChange) {
+        int leftChange = totalChange;
+
+        for (HashMap.Entry<String, Integer> entry : availableMon.entrySet()) {
+            int note      = Integer.parseInt(entry.getKey());
+            int available = entry.getValue();
+
+            // if the notes less than the change to return
+            if (note <= leftChange && available != 0) {
+                // calculate how many notes needed
+                int numOfNote = leftChange / note % note;
+
+                // check if available note satisfy number of notes we need
+                if (available <= numOfNote) {
+                    numOfNote -= available;
+                }
+
+                // update change to return by minus itself with the number of notes multiply the note
+                leftChange -= note * numOfNote;
+                availableMon.put(entry.getKey(), availableMon.get(entry.getKey()) - numOfNote);
+                System.out.println(entry.getKey() + ": " + String.valueOf(numOfNote));
+
+            }
+
+            if (leftChange == 0) {
+                break;
+            }
+        }
+
+        if (leftChange != 0) {
+            System.out.println("there is no available change. Do you want to input new note (press Y) or do you want to cancel the order (press C)");
+        }
+    }
+
+    public void returnChange(Map<String, Integer> note, Map<String, Integer> coin, double totalChangeDe) {
+        int leftNote = 0;
+        int leftCoin = 0;
+        String withoutLossOf0TotalChange = String.format("%.2f", totalChangeDe);
+        double totalChange = Double.valueOf(withoutLossOf0TotalChange);
+        // if change is not a whole
+        if (totalChange % 1 != 0) {
+            // String tc = Double.toString(totalChange);
+            String[] convert = withoutLossOf0TotalChange.split("\\.");
+
+            leftNote = Integer.parseInt(convert[0]);
+            
+            leftCoin = Integer.parseInt(convert[1]);
+            // System.out.println(leftCoin);
+            System.out.println("Please take your change: ");
+            handleChangeProcess(note, leftNote);
+            handleChangeProcess(coin, leftCoin);
+
+        } else {
+            // System.out.println(totalChange);
+            String tc = Double.toString(totalChange);
+            String[] convert = tc.split("\\.");
+
+            leftNote = Integer.parseInt(convert[0]);
+
+            handleChangeProcess(note, leftNote);
+        }
     }
 
 
