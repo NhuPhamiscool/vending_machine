@@ -24,12 +24,21 @@ public class App {
     // }
 
     public static void main(String[] args) throws Exception {
+        Seller s = new Seller("seller", "seller123");
         Product chips = new Chips("chip", 21, 30.0);
         Product drink = new Drink("drink", 01, 23.0);
-        VendingMachine vm = new VendingMachine();
-        vm.productList.add(chips);
-        vm.productList.add(drink);
-        vm.run();
+        ArrayList<Product> currentItem = new ArrayList<Product>();
+        currentItem.add(chips);
+        currentItem.add(drink);
+
+        System.out.println(s.availableItemDisplay(currentItem));
+        String a = "chip: 21, Chips, 7, 30.0\ndrink: 1, Drinks, 7, 23.0\n";
+        System.out.println(a);
+        System.out.println(s.availableItemDisplay(currentItem).equals(a));
+        // VendingMachine vm = new VendingMachine();
+        // vm.productList.add(chips);
+        // vm.productList.add(drink);
+        // vm.run();
 
         // vm.
         // vm.

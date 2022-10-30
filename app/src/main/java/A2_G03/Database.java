@@ -35,10 +35,8 @@ public class Database {
         fWriter.write(textToWrite);
         fWriter.close();
     }
-    // public static void main(String[] args) {
-    //     returnChange()
-    // }
-    public void setUp() {
+    
+    public static void setUp() {
         // make a folder called data here
         File folder = new File(FOLDER_PATH);
         folder.mkdirs();
@@ -138,22 +136,19 @@ public class Database {
     public static boolean checkUser (String username, String password)  throws Exception {
         JSONObject jObject =  getJSONFileObject("login_info");
         
+        for (Object role : jObject.keySet()) {
+            JSONArray infoList = (JSONArray) jObject.get(role);
 
-        
-        Object roleName = jObject.get("Customers");
+            for (int i = 0 ; i < infoList.size(); i++) {
+                JSONObject obj = (JSONObject) infoList.get(i);
+                String o = String.valueOf(obj);
+                Map<String, String> userInfo = new Gson().fromJson(o, new TypeToken<HashMap<String, String>>() {  
+                            }.getType());
 
-        JSONArray customerList = (JSONArray) roleName;
-
-                     
-
-        for (int i = 0 ; i < customerList.size(); i++) {
-            JSONObject obj = (JSONObject) customerList.get(i);
-            String o = String.valueOf(obj);
-            Map<String, String> userInfo = new Gson().fromJson(o, new TypeToken<HashMap<String, String>>() {  
-                        }.getType());
-            for (Map.Entry<String, String> entry : userInfo.entrySet()) {
-                if (entry.getKey().equals(username) && entry.getValue().equals(password)) {
-                    return true;
+                for (Map.Entry<String, String> entry : userInfo.entrySet()) {
+                    if (entry.getKey().equals(username) && entry.getValue().equals(password)) {
+                        return true;
+                    }
                 }
             }
             
@@ -163,14 +158,37 @@ public class Database {
        
 
     }
+            //Print key and value
+            // System.out.println("key: "+ keyStr + " value: " + keyvalue);
 
-    public void displayReport(String reportName) {
+            //for nested objects iteration if required
+            //if (keyvalue instanceof JSONObject)
+            //    printJsonObject((JSONObject)keyvalue);
+        // }
+        
+        // Object roleName = jObject.get("Customers");
 
-    }
+        // JSONArray customerList = (JSONArray) roleName;
 
-    public void addCreditCard() {
+                     
 
-    }
+        // for (int i = 0 ; i < customerList.size(); i++) {
+        //     JSONObject obj = (JSONObject) customerList.get(i);
+        //     String o = String.valueOf(obj);
+        //     Map<String, String> userInfo = new Gson().fromJson(o, new TypeToken<HashMap<String, String>>() {  
+        //                 }.getType());
+        //     for (Map.Entry<String, String> entry : userInfo.entrySet()) {
+        //         if (entry.getKey().equals(username) && entry.getValue().equals(password)) {
+        //             return true;
+        //         }
+        //     }
+            
+
+        // }
+    //     return false;
+       
+
+    // }
 
 
 

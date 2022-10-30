@@ -18,7 +18,8 @@ public class VendingMachine {
     ArrayList<Product> productList; 
     Map<String, Integer> note = new LinkedHashMap<String, Integer>();
     Map<String, Integer> coin = new LinkedHashMap<String, Integer>();
-    
+    // Display display;
+    Database database;
 
     public VendingMachine() {
         this.allUsers = new ArrayList<>();
@@ -37,6 +38,8 @@ public class VendingMachine {
         coin.put("20", 30);
         coin.put("10", 30);
         coin.put("5", 30);
+        // display = new Display();
+        this.database = new Database();
 
     }
 
@@ -69,62 +72,66 @@ public class VendingMachine {
         return false;
     }
 
-    public void login() throws Exception {
+    private boolean login() throws Exception {
         Scanner scan = new Scanner(System.in);
         boolean success = false;
         String username = "";
         String password = "";
-        // Console console = System.console();
         PasswordField pw = new PasswordField();
-        while (!success){
+
+        while (!success) {
             System.out.println("Please enter your username: ");
             username = scan.next();
             // System.out.println("Please enter your password: ");
             password = pw.readPassword("Please enter your password: ");
             
-            if (Database.checkUser(username, password)){
+            if (Database.checkUser(username, password)) {
                 System.out.println("\nLogin successful.");
                 this.currentUser = this.getUser(username);
-                success = true;
+                return true;
 
             } else {
                 System.out.println("Incorrect username or password. Please enter 1 to try again or 2 to quit.");
                 String option = scan.next();
-                while (!option.equals("1") && !option.equals("2")){
+
+                while (!option.equals("1") && !option.equals("2")) {
                     System.out.println("Invalid option, please try again.");
                     option = scan.next();
                 }
             
-                if (option.equals("2")){
-                    return;
+                if (option.equals("2")) {
+                    return false;
                 } 
             }
 
         }
+        return false;
     }
 
     public void createAccount() throws Exception {
         String username = "";
         String password = "";
-        // Console console = System.console();
         Scanner scan = new Scanner(System.in);
         boolean notUser = true;
-        while (notUser){
+
+        while (notUser) {
             System.out.println("Please enter a username: ");
             username = scan.next();
-            while(username.length() == 0 || username.equals("")){
+
+            while(username.length() == 0 || username.equals("")) {
                 System.out.println("Please specify a valid username.");
             }
             boolean checkExists = this.userExists(username);
-            if (checkExists){
+
+            if (checkExists) {
                 System.out.println("Username already exists. Please enter 1 to try again or 2 to quit.");
                 String option = scan.next();
                 
-                while (!option.equals("1") && !option.equals("2")){
+                while (!option.equals("1") && !option.equals("2")) {
                     System.out.println("Invalid option, please try again.");
                     option = scan.next();
                 }
-                if (option.equals("2")){
+                if (option.equals("2")) {
                     return;
                 } 
             } else {
@@ -159,78 +166,24 @@ public class VendingMachine {
         }
 
         if (opt.equals("1")) {
-            this.login();
+            if (login() == false) {
+                return;
+            }
 
         } else if (opt.equals("2")) {
-            this.createAccount();
+            createAccount();
 
         } else if (opt.equals("3")) {
             this.currentUser = anonymous;
         }
 
         HashMap<Product, Integer> selected = select();
-        String paymentMethod = "";
-        LocalDate date = LocalDate.now();
-        LocalTime time = LocalTime.now();
-        double moneyPaid = 0.0;
-        double returnChange = 0.0;
-
-        double total = 0;
-        for (Map.Entry<Product, Integer> entry : selected.entrySet()) {
-            total += entry.getKey().getPrice() * entry.getValue();
-        }
-        System.out.println("Your total is" + String.valueOf(total));
-        System.out.println("Please type [1] to proceed to payment process or [2] to cancel purchase");
-
-        String paymentOption = scan.next();
-
-        while (!paymentOption.equals("1") && ! paymentOption.equals("2")) {
-            System.out.println("Invalid option, please try again.");
-            System.out.println("Please type [1] to proceed to payment process or [2] to cancel purchase");
-            paymentOption = scan.next();
-        }
-
-        if (paymentOption.equals("1")) {
-            System.out.println("Please type [1] to pay with card or [2] to pay with cash");
-            paymentOption = scan.next();
-
-            while (!paymentOption.equals("1") && ! paymentOption.equals("2")) {
-                System.out.println("Invalid option, please try again.");
-                System.out.println("Please type [1] to pay with card or [2] to pay with cash");
-                paymentOption = scan.next();
-            }
-            if (paymentOption.equals("1")) {
-                System.out.println("Please enter card holder name");
-                String cardHolderName = scan.next();
-
-                System.out.println("Please enter pin");
-                String pin = scan.next();
-
-            
-                if (Cashier.payByCard(cardHolderName, pin)) {
-                    System.out.println("transaction completed. Thank you.");
-                    // currentUser.addCardInfo(cardHolderName, pin);
-                }
-            
-                
-            } else {
-                System.out.println("Please input your cash");
-                double paymentAmount = scan.nextDouble();
-                
-                double totalChange = paymentAmount - total;
-                if (totalChange <= 0) {
-                    
-                    // error message 
-                }
-                returnChange(note, coin, totalChange);
-                System.out.println("transaction completed. Thank you.");  
-            }
-        
-        }
+        paymentHandle(selected, scan);
 
 
-        Transaction t = scan(String.valueOf(date), String.valueOf(time), paymentMethod, selected, moneyPaid, returnChange);
+        // Transaction t = scan(String.valueOf(date), String.valueOf(time), paymentMethod, selected, moneyPaid, returnChange);
         // currentUser.addTransaction(t);
+
         if (currentUser instanceof Owner) {
             System.out.println("Welcome Owner");
             System.out.println("As an owner, here are your options for performing functionalities . \nA list of usernames in the vending machine\nA summary of cancelled transcations");
@@ -252,8 +205,80 @@ public class VendingMachine {
 
     }
 
-    //to be confirmed
-    // public void printreciept
+    private void paymentHandle(HashMap<Product, Integer> selected, Scanner scan) throws Exception {
+        String paymentMethod = "";
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now();
+        double moneyPaid = 0.0;
+        double returnChange = 0.0;
+        double total = 0;
+
+        // calculating total by looping through the selected list
+        for (Map.Entry<Product, Integer> entry : selected.entrySet()) {
+            total += entry.getKey().getPrice() * entry.getValue();
+        }
+
+        System.out.println("Your total is" + String.valueOf(total));
+        System.out.println("Please type [1] to proceed to payment process or [2] to cancel purchase");
+
+        String paymentOption = scan.next();
+
+        while (!paymentOption.equals("1") && ! paymentOption.equals("2")) {
+            System.out.println("Invalid option, please try again.");
+            System.out.println("Please type [1] to proceed to payment process or [2] to cancel purchase");
+            paymentOption = scan.next();
+        }
+
+        
+        if (paymentOption.equals("1")) {
+            System.out.println("Please type [1] to pay with card or [2] to pay with cash");
+            paymentOption = scan.next();
+
+            while (!paymentOption.equals("1") && ! paymentOption.equals("2")) {
+                System.out.println("Invalid option, please try again.");
+                System.out.println("Please type [1] to pay with card or [2] to pay with cash");
+                paymentOption = scan.next();
+            }
+
+            // card payment method
+            if (paymentOption.equals("1")) {
+                System.out.println("Please enter card holder name");
+                String cardHolderName = scan.next();
+
+                System.out.println("Please enter pin");
+                String pin = scan.next();
+
+            
+                if (Cashier.payByCard(cardHolderName, pin)) {
+                    System.out.println("transaction completed. Thank you.");
+                    // currentUser.addCardInfo(cardHolderName, pin);
+                }
+
+                moneyPaid = total;
+                paymentMethod = "card";
+            
+                
+            } else {
+                System.out.println("Please input your cash");
+                double paymentAmount = scan.nextDouble();
+                
+                double totalChange = paymentAmount - total;
+                if (totalChange <= 0) {
+                    
+                    // error message 
+                }
+                returnChange(note, coin, totalChange);
+                moneyPaid = paymentAmount;
+                returnChange = totalChange;
+                paymentMethod = "cash";
+
+                System.out.println("transaction completed. Thank you.");  
+            }
+
+            Transaction t = scan(String.valueOf(date), String.valueOf(time), paymentMethod, selected, moneyPaid, returnChange);
+        }
+        // Transaction t = scan(String.valueOf(date), String.valueOf(time), paymentMethod, selected, moneyPaid, returnChange);
+    }
 
     
     public Transaction scan(String date, String time, String paymentMethod, HashMap<Product, Integer> selectedProduct, 

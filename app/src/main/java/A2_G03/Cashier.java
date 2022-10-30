@@ -79,6 +79,53 @@ public class Cashier extends User {
     //     }
     // }
 
+    // public static boolean payByCard(String cardHolderName, String pin) throws ParseException {
+    //     org.json.simple.JSONArray ja;
+
+    //     try {
+    //         String jsonString;
+           
+    //         jsonString = Database.read("credit_cards.json");
+    //         JSONParser parser = new JSONParser();
+    //         ja = (org.json.simple.JSONArray) parser.parse(jsonString);
+            
+    //     }
+    //     catch (IOException e) {
+    //         e.printStackTrace();
+    //         return false;
+    //     }
+
+    //     for (int i = 0 ; i < ja.size(); i++) {
+    //         org.json.simple.JSONObject obj = (org.json.simple.JSONObject) ja.get(i);
+    //         if (obj.get("name").equals(cardHolderName) && obj.get("number").equals(pin)) {
+    //             return true; 
+    //         }
+    //     }
+    //     return false;
+
+
+
+
+
+    // }
+
+    // public void modifyChange(Map<String, Integer> change, String toChange, int quantity) {
+    //     change.put(toChange, change.get(toChange) + quantity);
+    // }
+
+    // public void availableChangeDisplay(Map<String, Integer> change) {
+    //     for (HashMap.Entry<String, Integer> entry : change.entrySet()) {
+    //         System.out.println(entry.getKey() + ": " + String.valueOf(entry.getValue()));
+    //     }
+    // }
+
+    // public void transactionSummary() {
+    //     for (Transaction t : Transaction.completedTransaction) {
+    //         System.out.println(t.getDate() + t.getTime() + t.getItemName() + String.valueOf(t.getMoneyPaid()) + String.valueOf(t.getReturnChange()) + t.getPaymentMethod());
+    //     }
+    // }
+
+
     public static boolean payByCard(String cardHolderName, String pin) throws ParseException {
         org.json.simple.JSONArray ja;
 
@@ -102,26 +149,19 @@ public class Cashier extends User {
             }
         }
         return false;
-
-
-
-
-
     }
 
     public void modifyChange(Map<String, Integer> change, String toChange, int quantity) {
         change.put(toChange, change.get(toChange) + quantity);
     }
 
-    public void availableChangeDisplay(Map<String, Integer> change) {
+    public String availableChangeDisplay(Map<String, Integer> change) {
+        String output = "";
+        
         for (HashMap.Entry<String, Integer> entry : change.entrySet()) {
-            System.out.println(entry.getKey() + ": " + String.valueOf(entry.getValue()));
+            output += entry.getKey() + ": " + String.valueOf(entry.getValue()) + "\n";
         }
+        return output;
     }
 
-    public void transactionSummary() {
-        for (Transaction t : Transaction.completedTransaction) {
-            System.out.println(t.getDate() + t.getTime() + t.getItemName() + String.valueOf(t.getMoneyPaid()) + String.valueOf(t.getReturnChange()) + t.getPaymentMethod());
-        }
-    }
 }
