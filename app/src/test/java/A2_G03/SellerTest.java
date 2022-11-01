@@ -6,6 +6,9 @@ package A2_G03;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
+import nl.altindag.console.ConsoleCaptor;
+// import org.hamcrest.MatcherAssert.assertThat;
+import com.google.common.truth.Truth;
 
 class SellerTest {
 
@@ -17,6 +20,8 @@ class SellerTest {
 
     @Test 
     void testAvailableItemDisplay() {
+        ConsoleCaptor consoleCaptor = new ConsoleCaptor();
+
         Seller s = new Seller("seller", "seller123");
         Product chips = new Chips("chip", 21, 30.0);
         Product drink = new Drink("drink", 01, 23.0);
@@ -25,12 +30,18 @@ class SellerTest {
         currentItem.add(chips);
         currentItem.add(drink);
         
-        assertEquals("chip: 21, Chips, 7, 30.0\ndrink: 1, Drinks, 7, 23.0\n" , s.availableItemDisplay(currentItem));
+        // assertEquals("chip: 21, Chips, 7, 30.0\ndrink: 1, Drinks, 7, 23.0\n" , s.availableItemDisplay(currentItem));
+        s.availableItemDisplay(currentItem);
+        Truth.assertThat(consoleCaptor.getStandardOutput()).contains("chip: 21, Chips, 7, 30.0");
+        Truth.assertThat(consoleCaptor.getStandardOutput()).contains("drink: 1, Drinks, 7, 23.0");
+        consoleCaptor.close();
     
     }
 
     @Test
     void testItemSummary() {
+        ConsoleCaptor consoleCaptor = new ConsoleCaptor();
+
         Seller s = new Seller("seller", "seller123");
         
         Product chips = new Chips("chip", 21, 30.0);
@@ -40,6 +51,11 @@ class SellerTest {
         currentItem.add(chips);
         currentItem.add(drink);
         
-        assertEquals("21: chip: 0\n1: drink: 0\n" , s.itemSummary(currentItem));
+        // assertEquals("21: chip: 0\n1: drink: 0\n" , s.itemSummary(currentItem));
+        s.itemSummary(currentItem);
+        Truth.assertThat(consoleCaptor.getStandardOutput()).contains("21: chip: 0");
+        Truth.assertThat(consoleCaptor.getStandardOutput()).contains("1: drink: 0");
+        
+        consoleCaptor.close();
     }
 }

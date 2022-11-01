@@ -7,32 +7,42 @@ public class Seller extends User {
         super(username, password);
     }
 
-    public String availableItemDisplay(ArrayList<Product> currentItem) {
-        String output = "";
+    public void availableItemDisplay(ArrayList<Product> currentItem) {
         for (Product p: currentItem) {
             if (p.getStock() != 0) {
-                output += p.getName() + ": " 
+                System.out.println(p.getName() + ": " 
                                     + p.getCode() + ", " 
                                     + p.getCategory() + ", " 
                                     + p.getStock() + ", " 
-                                    + p.getPrice();
-                output += "\n";
+                                    + p.getPrice());
             }
         }
-        return output;
     }
 
-    public String itemSummary(ArrayList<Product> currentItem) {
-        String output = "";
+
+    // public String availableItemDisplay(ArrayList<Product> currentItem) {
+    //     String output = "";
+    //     for (Product p: currentItem) {
+    //         if (p.getStock() != 0) {
+    //             output += p.getName() + ": " 
+    //                                 + p.getCode() + ", " 
+    //                                 + p.getCategory() + ", " 
+    //                                 + p.getStock() + ", " 
+    //                                 + p.getPrice();
+    //             output += "\n";
+    //         }
+    //     }
+    //     return output;
+    // }
+
+    public void itemSummary(ArrayList<Product> currentItem) {
         for (Product p: currentItem) {
-            output += p.getCode() + ": " 
+            System.out.println(p.getCode() + ": " 
                                     + p.getName() + ": " 
-                                    + p.getQuantitySold();
-            output += "\n";
-
+                                    + p.getQuantitySold());
         }
-        return output;
     }
+
 
     // public void modifyItem (Product itemToModify, String newItemName, int newItemCode, String newItemCategory,
     // int newItemQuantity, double newItemPrice) {

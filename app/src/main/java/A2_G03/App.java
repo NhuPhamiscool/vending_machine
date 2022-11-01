@@ -31,10 +31,10 @@ public class App {
         currentItem.add(chips);
         currentItem.add(drink);
 
-        System.out.println(s.availableItemDisplay(currentItem));
-        String a = "chip: 21, Chips, 7, 30.0\ndrink: 1, Drinks, 7, 23.0\n";
-        System.out.println(a);
-        System.out.println(s.availableItemDisplay(currentItem).equals(a));
+        // System.out.println(s.availableItemDisplay(currentItem));
+        // String a = "chip: 21, Chips, 7, 30.0\ndrink: 1, Drinks, 7, 23.0\n";
+        // System.out.println(a);
+        // System.out.println(s.availableItemDisplay(currentItem).equals(a));
         // VendingMachine vm = new VendingMachine();
         // vm.productList.add(chips);
         // vm.productList.add(drink);

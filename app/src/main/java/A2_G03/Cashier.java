@@ -155,13 +155,19 @@ public class Cashier extends User {
         change.put(toChange, change.get(toChange) + quantity);
     }
 
-    public String availableChangeDisplay(Map<String, Integer> change) {
-        String output = "";
+    // public String availableChangeDisplay(Map<String, Integer> change) {
+    //     String output = "";
         
+    //     for (HashMap.Entry<String, Integer> entry : change.entrySet()) {
+    //         output += entry.getKey() + ": " + String.valueOf(entry.getValue()) + "\n";
+    //     }
+    //     return output;
+    // }
+
+    public void availableChangeDisplay(Map<String, Integer> change) {
         for (HashMap.Entry<String, Integer> entry : change.entrySet()) {
-            output += entry.getKey() + ": " + String.valueOf(entry.getValue()) + "\n";
+            System.out.println(entry.getKey() + ": " + String.valueOf(entry.getValue()));
         }
-        return output;
     }
 
 }
