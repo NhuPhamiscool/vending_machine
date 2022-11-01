@@ -43,7 +43,7 @@ class DatabaseTest {
         File file = new File("./data" + "/" + "login_info.json");
         assertTrue(file.exists());
         String actual = Database.read("login_info.json");
-        String expected = "{\"Owner\":[],\"Customers\":[],\"Seller\":[],\"Admin\":[],\"Cashier\":[]}";
+        String expected = "{\"Owner\":[],\"Customer\":[],\"Seller\":[],\"Admin\":[],\"Cashier\":[]}";
         // String expected = "{\"update_test\":[{\"rates\":{\"wen\":[2.0,1.0],\"sgp\":[1.98,0.0]},\"dates\":\"2012-09-09\"}]}";
         assertEquals(expected, actual);
         

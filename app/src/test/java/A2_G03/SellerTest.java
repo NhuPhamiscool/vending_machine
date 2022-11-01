@@ -33,7 +33,7 @@ class SellerTest {
         // assertEquals("chip: 21, Chips, 7, 30.0\ndrink: 1, Drinks, 7, 23.0\n" , s.availableItemDisplay(currentItem));
         s.availableItemDisplay(currentItem);
         Truth.assertThat(consoleCaptor.getStandardOutput()).contains("chip: 21, Chips, 7, 30.0");
-        Truth.assertThat(consoleCaptor.getStandardOutput()).contains("drink: 1, Drinks, 7, 23.0");
+        Truth.assertThat(consoleCaptor.getStandardOutput()).contains("drink: 1, Drink, 7, 23.0");
         consoleCaptor.close();
     
     }
