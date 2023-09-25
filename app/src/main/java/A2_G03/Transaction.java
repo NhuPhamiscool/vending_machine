@@ -54,6 +54,7 @@ public class Transaction {
 
     }
 
+
     // public void addToTransaction(Product p, int quantity) {
     //     productsAndQuantity.put(p, quantity);
     // }
